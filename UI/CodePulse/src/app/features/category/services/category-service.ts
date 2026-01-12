@@ -1,5 +1,6 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { AddCategoryRequest } from '../models/category.model';
 
 @Injectable({
   providedIn: 'root',
@@ -8,7 +9,17 @@ export class CategoryService {
   private http = inject(HttpClient);
   private apiBaseUrl = 'https://localhost:44374';
 
-  addCategory(category : {name:string,urlHandle:string}) {
-    this.http.post<void>(`${this.apiBaseUrl}/api/Categories`,category)
+  addCategoryStatus = signal<'idle' | 'loading' | 'error' | 'success'>('idle');
+
+  addCategory(category : AddCategoryRequest) {
+    this.addCategoryStatus.set('loading');
+    this.http.post<void>(`${this.apiBaseUrl}/api/Categories`,category).subscribe({
+      next:() => {
+        this.addCategoryStatus.set('success');
+      },
+      error:() => {
+        this.addCategoryStatus.set('error');
+      }
+    });
   }
 }
