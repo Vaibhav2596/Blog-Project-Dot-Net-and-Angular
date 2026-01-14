@@ -13,36 +13,37 @@ export class CategoryService {
   addCategoryStatus = signal<'idle' | 'loading' | 'error' | 'success'>('idle');
   updateCategoryStatus = signal<'idle' | 'loading' | 'error' | 'success'>('idle');
 
-  addCategory(category : AddCategoryRequest) {
+  addCategory(category: AddCategoryRequest) {
     this.addCategoryStatus.set('loading');
-    this.http.post<void>(`${this.apiBaseUrl}/api/Categories`,category).subscribe({
-      next:() => {
+    this.http.post<void>(`${this.apiBaseUrl}/api/Categories`, category).subscribe({
+      next: () => {
         this.addCategoryStatus.set('success');
       },
-      error:() => {
+      error: () => {
         this.addCategoryStatus.set('error');
-      }
+      },
     });
   }
 
-  getAllCategories(){
-    return httpResource<Category[]>(() => `${this.apiBaseUrl}/api/Categories`)
+  getAllCategories() {
+    return httpResource<Category[]>(() => `${this.apiBaseUrl}/api/Categories`);
   }
 
-  getCategoryById(id: InputSignal<string | undefined>){
-    return httpResource<Category>(() => `${this.apiBaseUrl}/api/Categories/${id()}`)
+  getCategoryById(id: InputSignal<string | undefined>) {
+    return httpResource<Category>(() => `${this.apiBaseUrl}/api/Categories/${id()}`);
   }
 
-  updateCategory(id:string, updateCategoryRequestDto: UpdateCategoryRequest){
+  updateCategory(id: string, updateCategoryRequestDto: UpdateCategoryRequest) {
     this.updateCategoryStatus.set('loading');
-    this.http.put<void>(`${this.apiBaseUrl}/api/categories/${id}`,updateCategoryRequestDto)
-    .subscribe({
-      next : () => {
-        this.updateCategoryStatus.set('success');
-      },
-      error : () => {
-        this.updateCategoryStatus.set('error');
-      }
-    })
+    this.http
+      .put<void>(`${this.apiBaseUrl}/api/categories/${id}`, updateCategoryRequestDto)
+      .subscribe({
+        next: () => {
+          this.updateCategoryStatus.set('success');
+        },
+        error: () => {
+          this.updateCategoryStatus.set('error');
+        },
+      });
   }
 }
