@@ -34,7 +34,7 @@ namespace CodePulse.API.Repositories.Implementation
 
         public async Task<Category> UpdateAsync(Category category)
         {
-            var existingCategory = _dbContext.Categories.FirstOrDefaultAsync(x => x.Id == category.Id);
+            var existingCategory =  await _dbContext.Categories.FirstOrDefaultAsync(x => x.Id == category.Id);
 
             if (existingCategory != null)
             {
