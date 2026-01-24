@@ -3,6 +3,8 @@ import { BlogPostService } from '../services/blog-post-service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MarkdownComponent } from 'ngx-markdown';
 import { CategoryService } from '../../category/services/category-service';
+import { UpdateBlogPostRequest } from '../models/blogpost.model';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-edit-blogpost',
@@ -14,7 +16,8 @@ export class EditBlogpost {
   id = input<string>();
   blogPostService = inject(BlogPostService);
   categoryService = inject(CategoryService);
-  
+  router = inject(Router)
+
   private blogPostRef = this.blogPostService.getBlogPostById(this.id);
   blogPostResponse = this.blogPostRef.value;
 
@@ -69,12 +72,36 @@ export class EditBlogpost {
           .toISOString()
           .split('T')[0],
         urlHandle: this.blogPostResponse()?.urlHandle,
-        categories : this.blogPostResponse()?.categories.map(x => x.id)
+        categories: this.blogPostResponse()?.categories.map((x) => x.id),
       });
     }
   });
 
   onSubmit() {
-    console.log(this.editBlogPostForm.getRawValue());
+    const formValue = this.editBlogPostForm.getRawValue();
+    const id = this.id();
+    if (id && this.editBlogPostForm.valid) {
+      const UpdateBlogPostRequest: UpdateBlogPostRequest = {
+        title: formValue.title,
+        shortDescription: formValue.shortDescription,
+        content: formValue.content,
+        author: formValue.author,
+        featuredImageUrl: formValue.featuredImageUrl,
+        isVisible: formValue.isVisible,
+        publishedDate: new Date(formValue.publishedDate),
+        urlHandle: formValue.urlHandle,
+        categories: formValue.categories ?? [],
+      };
+
+      this.blogPostService.updateBlogPost(id, UpdateBlogPostRequest).subscribe({
+        next : (response) => {
+          console.log(response)
+          this.router.navigate(['/admin/blogposts'])
+        },
+        error : () => {
+          console.error("Something Went Wrong!");
+        }
+      });
+    }
   }
 }
