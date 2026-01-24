@@ -51,6 +51,7 @@ export class AddBlogpost {
     isVisible: new FormControl<boolean>(true, {
       nonNullable: true,
     }),
+    categories: new FormControl<string[]>([])
   });
 
   onSubmit() {
@@ -65,7 +66,8 @@ export class AddBlogpost {
       featuredImageUrl: formRawValue.featuredImageUrl,
       publishedDate: new Date(formRawValue.publishedDate),
       author: formRawValue.author,
-      isVisible: formRawValue.isVisible
+      isVisible: formRawValue.isVisible,
+      categories: formRawValue.categories ?? []
     }
     this.blogPostService.createBlogPost(requestDto).subscribe(
       {
