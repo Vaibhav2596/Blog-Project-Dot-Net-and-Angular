@@ -1,4 +1,6 @@
 ﻿using CodePulse.API.Models.Domain;
+using CodePulse.API.Models.DTO;
+using CodePulse.API.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -8,6 +10,12 @@ namespace CodePulse.API.Controllers
     [ApiController]
     public class ImagesController : ControllerBase
     {
+        private readonly IImageRepository _imageRepository;
+        public ImagesController(IImageRepository imageRepository)
+        {
+            this._imageRepository = imageRepository;
+        }
+
         // POST: {apibaseurl}/api/images
         [HttpPost]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile file, [FromForm] string fileName, [FromForm] string title)
@@ -24,7 +32,24 @@ namespace CodePulse.API.Controllers
                     Title = title,
                     DateCreated = DateTime.Now
                 };
+
+                blogImage = await _imageRepository.Upload(file,blogImage);
+
+                // Convert Domain Model to DTO
+                var response = new BlogImageDto
+                {
+                    Id = blogImage.Id,
+                    Title = blogImage.Title,
+                    DateCreated = blogImage.DateCreated,
+                    FileExtension = blogImage.FileExtension,
+                    FileName = blogImage.FileName,
+                    Url = blogImage.Url
+                };
+
+                return Ok(response);
             }
+
+            return BadRequest(ModelState);
         }
 
         private void ValidateFileUpload(IFormFile file)
