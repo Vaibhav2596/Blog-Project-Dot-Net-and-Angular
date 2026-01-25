@@ -24,6 +24,6 @@ export class BlogPostService {
   }
 
   updateBlogPost(id: string, body: UpdateBlogPostRequest): Observable<BlogPost>{
-    return this.http.put<BlogPost>(`${this.apiBaseUrl}/api/blogposts/${id()}`,body);
+    return this.http.put<BlogPost>(`${this.apiBaseUrl}/api/blogposts/${id}`,body);
   }
 }
