@@ -204,7 +204,7 @@ namespace CodePulse.API.Controllers
 
         // DELETE : {apibaseUrl}/api/blogposts/{id}
         [HttpDelete]
-        [Route("{id:Guid} ")]
+        [Route("{id:Guid}")]
         public async Task<IActionResult> DeleteBlogPost([FromRoute] Guid id)
         {
             var deletedBlogPost = await _blogPostRepository.DeleteAsync(id);
