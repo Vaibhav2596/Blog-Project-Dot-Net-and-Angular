@@ -80,6 +80,15 @@ export class EditBlogpost {
     }
   });
 
+  selectedImageEffectRef = effect(() => {
+    const selectedImageUrl = this.imageSelectorService.selectedImage();
+    if(selectedImageUrl){
+      this.editBlogPostForm.patchValue({
+        featuredImageUrl : selectedImageUrl
+      }); 
+    }
+  })
+
   onSubmit() {
     const formValue = this.editBlogPostForm.getRawValue();
     const id = this.id();

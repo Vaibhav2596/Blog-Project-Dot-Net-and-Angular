@@ -10,6 +10,7 @@ import { environment } from '../../../environments/environment';
 export class ImageSelectorService {
   http = inject(HttpClient);
   showImageSelector = signal<boolean>(false);
+  selectedImage = signal<string | null>(null);
 
   displayImageSelector(){
     this.showImageSelector.set(true);
@@ -32,5 +33,10 @@ export class ImageSelectorService {
       id();
       return `${environment.apiBaseUrl}/api/images`;
     });
+  }
+
+  selectImage(imageUrl:string){
+    this.selectedImage.set(imageUrl);
+    this.hideImageSelector();
   }
 }
