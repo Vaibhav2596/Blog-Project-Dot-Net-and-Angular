@@ -40,7 +40,12 @@
           />
         </div>
       }
-      <label class="form-label">Featured Image URL</label>
+      <label class="form-label"
+        >Featured Image URL
+        <button class="btn btn-light" type="button" (click)="imageSelectorService.displayImageSelector()">
+          Select Images
+        </button>
+      </label>
       <input type="text" class="form-control" formControlName="featuredImageUrl" />
     </div>
 
