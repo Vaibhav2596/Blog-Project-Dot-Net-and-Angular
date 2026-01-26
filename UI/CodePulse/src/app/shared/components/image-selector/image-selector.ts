@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { ImageSelectorService } from '../../services/image-selector-service';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
@@ -11,6 +11,11 @@ import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angula
 export class ImageSelector {
   private imageSelectorService = inject(ImageSelectorService);
   showImageSelector = this.imageSelectorService.showImageSelector.asReadonly();
+  id = signal<string | undefined>(undefined);
+  imagesRef = this.imageSelectorService.getAllImages(this.id);
+  isLoading = this.imagesRef.isLoading;
+  images = this.imagesRef.value;
+
 
   imageSelectorUploadForm = new FormGroup({
     file: new FormControl<File | null | undefined>(null, {
@@ -50,6 +55,8 @@ export class ImageSelector {
       this.imageSelectorService.uploadImage(formRawValue.file!,formRawValue.name,formRawValue.title).subscribe({
         next: (response) => {
           console.log(response)
+          this.id.set(response.id);
+          this.imageSelectorUploadForm.reset();
         },
         error : () => { 
           console.error('Something went wrong!')
