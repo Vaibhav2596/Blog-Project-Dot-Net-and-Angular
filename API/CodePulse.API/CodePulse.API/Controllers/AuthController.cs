@@ -1,4 +1,5 @@
 ﻿using CodePulse.API.Models.DTO;
+using CodePulse.API.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,9 +11,13 @@ namespace CodePulse.API.Controllers
     public class AuthController : ControllerBase
     {
         private readonly UserManager<IdentityUser> _userManager;
-        public AuthController(UserManager<IdentityUser> userManager)
+        private readonly ITokenRepository tokenRepository;
+
+        public AuthController(UserManager<IdentityUser> userManager,
+            ITokenRepository tokenRepository)
         {
             this._userManager = userManager;
+            this.tokenRepository = tokenRepository;
         }
 
         // POST: {apibaseurl}/api/auth/register 
@@ -35,7 +40,7 @@ namespace CodePulse.API.Controllers
             {
                 // Add Role to user (Reader)
                 identityResult = await _userManager.AddToRoleAsync(user, "Reader");
-                if(identityResult.Succeeded)
+                if (identityResult.Succeeded)
                 {
                     return Ok();
                 }
@@ -54,7 +59,7 @@ namespace CodePulse.API.Controllers
             {
                 if (identityResult.Errors.Any())
                 {
-                    foreach(var error in identityResult.Errors)
+                    foreach (var error in identityResult.Errors)
                     {
                         ModelState.AddModelError("", error.Description);
                     }
@@ -73,7 +78,7 @@ namespace CodePulse.API.Controllers
             // Check Email
             var identityUser = await _userManager.FindByEmailAsync(request.Email);
 
-            if(identityUser is not null)
+            if (identityUser is not null)
             {
                 // Check Password
                 var checkPasswordResult = await _userManager.CheckPasswordAsync(identityUser, request.Password);
@@ -81,12 +86,15 @@ namespace CodePulse.API.Controllers
                 if (checkPasswordResult)
                 {
                     var roles = await _userManager.GetRolesAsync(identityUser);
+
                     // Create a token and Response 
+                    var jwtToken = tokenRepository.CreateJwtToken(identityUser, roles.ToList());
+
                     var response = new LoginResponseDto()
                     {
                         Email = request.Email,
                         Roles = roles.ToList(),
-                        Token = "TOKEN"
+                        Token = jwtToken
                     };
 
                     return Ok(response);
