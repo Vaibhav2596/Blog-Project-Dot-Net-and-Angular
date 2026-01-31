@@ -21,6 +21,7 @@ namespace CodePulse.API.Controllers
 
 
         [HttpPost]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryRequestDto request)
         {
             // Map DTO to Domain Model
@@ -45,7 +46,7 @@ namespace CodePulse.API.Controllers
 
         // GET: /api/categories
         [HttpGet]
-        [Authorize]
+
         public async Task<IActionResult> GetAllCategories()
         {
             var categories =  await _categoryRepository.GetAllAsync();
@@ -91,6 +92,7 @@ namespace CodePulse.API.Controllers
         // PUT: /api/categories/{id}
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> UpdateCategory([FromRoute] Guid id, UpdateCategoryRequestDto request)
         {
             // Convert DTO to Domain Model
@@ -123,6 +125,7 @@ namespace CodePulse.API.Controllers
         // DELETE : /api/categories/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
         {
             var category = await _categoryRepository.DeleteAsync(id);
