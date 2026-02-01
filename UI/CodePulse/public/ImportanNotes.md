@@ -15,3 +15,5 @@ Add-Migration "Initial Migration For Auth" -Context "AuthDbContext"
 Update-Database -Context "AuthDbContext"
 
 
+Cookie Storage
+// to use cookies in application we have to allow credentials and add withOrigins in Program.cs
